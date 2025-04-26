@@ -95,6 +95,7 @@
                     <option value="">Select...</option>
                     <option value="Client">Client</option>
                     <option value="Coworker">Coworker</option>
+                    <option value="Coworker">Corperate</option>
                 </select>
             </div>
 
@@ -107,32 +108,29 @@
                     <option value="Friendly">Friendly</option>
                     <option value="Apologetic">Apologetic</option>
                     <option value="Confident">Confident</option>
+                    <option value="Persuasive">Persuasive</option>
+                    <option value="Direct">Direct</option>
                 </select>
             </div>
 
             <!-- Sentiment -->
             <div class="mb-3">
                 <label for="sentiment" class="form-label">Main Message Sentiment</label>
-                <select class="form-select" id="sentiment" required>
+                <select class="form-select" id="sentiment">
                     <option value="">Select...</option>
                     <option value="Provide Update">Provide Update</option>
-                    <option value="Decline Request">Decline Request</option>
                     <option value="Request Information">Request Information</option>
-                    <option value="Confirm Resolution">Confirm Resolution</option>
+                    <option value="Provide Account Information">Provide Account Information</option>
+                    <option value="Provide Instructions">Provide Instructions</option>
+                    <option value="Decline Request">Decline Request</option>
+                    <option value="Request Information">Approve Request</option>
                 </select>
-            </div>
-
-            <!-- Email Type -->
-            <div class="mb-3">
-                <label for="emailType" class="form-label">Type of Email</label>
-                <input type="text" class="form-control" id="emailType"
-                    placeholder="Example: Status Update, Issue Resolution" required>
             </div>
 
             <!-- Customer Email -->
             <div class="mb-3">
-                <label for="customerEmail" class="form-label">Customer or Coworker's Email</label>
-                <textarea class="form-control" id="customerEmail" rows="4" required></textarea>
+                <label for="emailContent" class="form-label">Brief Email Content</label>
+                <textarea class="form-control" id="emailContent" rows="4" required></textarea>
             </div>
 
             <!-- File Upload -->
