@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Email Reply Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Form Blurring */
+        .blurred {
+            filter: blur(4px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* File Card Fade-in */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Slide Up Collapse Animation */
+        .slide-up {
+            animation: slideUp 0.5s forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+                max-height: 1000px;
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-50px);
+                max-height: 0;
+                overflow: hidden;
+            }
+        }
+
+        /* Spinner Styles */
+        #loadingSpinner {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1050;
+            top: 50%;
+            left: 50%;
+            translate: -50% -50%;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body class="p-4">
+
+    <h1 class="mb-4">Generate Email</h1>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="d-flex justify-content-center align-items-center fade">
+        <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div id="formContainer">
+        <form id="replyForm">
+
+            <!-- Audience -->
+            <div class="mb-3">
+                <label for="audience" class="form-label">Replying to</label>
+                <select class="form-select" id="audience" required>
+                    <option value="">Select...</option>
+                    <option value="Client">Client</option>
+                    <option value="Coworker">Coworker</option>
+                </select>
+            </div>
+
+            <!-- Tone -->
+            <div class="mb-3">
+                <label for="tone" class="form-label">Tone</label>
+                <select class="form-select" id="tone" required>
+                    <option value="">Select...</option>
+                    <option value="Professional">Professional</option>
+                    <option value="Friendly">Friendly</option>
+                    <option value="Apologetic">Apologetic</option>
+                    <option value="Confident">Confident</option>
+                </select>
+            </div>
+
+            <!-- Sentiment -->
+            <div class="mb-3">
+                <label for="sentiment" class="form-label">Main Message Sentiment</label>
+                <select class="form-select" id="sentiment" required>
+                    <option value="">Select...</option>
+                    <option value="Provide Update">Provide Update</option>
+                    <option value="Decline Request">Decline Request</option>
+                    <option value="Request Information">Request Information</option>
+                    <option value="Confirm Resolution">Confirm Resolution</option>
+                </select>
+            </div>
+
+            <!-- Email Type -->
+            <div class="mb-3">
+                <label for="emailType" class="form-label">Type of Email</label>
+                <input type="text" class="form-control" id="emailType"
+                    placeholder="Example: Status Update, Issue Resolution" required>
+            </div>
+
+            <!-- Customer Email -->
+            <div class="mb-3">
+                <label for="customerEmail" class="form-label">Customer or Coworker's Email</label>
+                <textarea class="form-control" id="customerEmail" rows="4" required></textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div class="mb-3">
+                <label for="templateContent" class="form-label">Optional Template</label>
+                <input type="file" class="form-control" id="templateContent">
+                <div id="fileCardContainer" class="mt-3"></div>
+            </div>
+
+            <!-- Collapsible Template Preview -->
+            <div class="mb-3">
+                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#templatePreviewContainer" aria-expanded="false"
+                    aria-controls="templatePreviewContainer" id="previewButton" disabled>
+                    Preview Uploaded Template
+                </button>
+
+                <div class="collapse mt-2" id="templatePreviewContainer">
+                    <div class="card card-body">
+                        <pre id="templatePreview" class="mb-0"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Generate Reply</button>
+
+        </form>
+    </div>
+
+    <!-- Generated JSON -->
+    <h2 class="mt-5">Generated Email Preview</h2>
+    <div id="emailPreview" class="card p-4 shadow-sm bg-light" style="white-space: pre-wrap;"></div>
+
+    
+    <!-- Office.js (MUST be loaded first for Outlook Add-ins) -->
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+    <!-- Main JavaScript -->
+    let templateContent = null;
+    let originalEmailBody = "";
+
+    Office.onReady(info => {
+        if (info.host === Office.HostType.Outlook) {
+            console.log('Office.js is ready in Outlook!');
+
+            // Capture the original email's body
+            Office.context.mailbox.item.body.getAsync(Office.CoercionType.Text, (result) => {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    originalEmailBody = result.value;
+                    console.log('Captured original email:', originalEmailBody);
+                } else {
+                    console.error('Failed to get email body:', result.error.message);
+                }
+            });
+        }
+    });
+
+    // Fix spinner visibility: Hide it initially
+    window.onload = function() {
+        document.getElementById('loadingSpinner').classList.remove('show');
+    };
+
+    document.getElementById('templateContent').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const fileCardContainer = document.getElementById('fileCardContainer');
+
+        if (file) {
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert('File too large. Max 5MB.');
+                e.target.value = "";
+                templateContent = null;
+                fileCardContainer.innerHTML = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                templateContent = {
+                    fileName: file.name,
+                    fileType: file.type,
+                    fileSize: file.size,
+                    base64Content: event.target.result.split(',')[1]
+                };
+
+                const fileSizeKB = (file.size / 1024).toFixed(1);
+                fileCardContainer.innerHTML = `
+                    <div class="card shadow-sm fade-in">
+                        <div class="card-body">
+                            <h5 class="card-title">${file.name}</h5>
+                            <p><strong>Size:</strong> ${fileSizeKB} KB</p>
+                            <p><strong>Type:</strong> ${file.type || 'Unknown'}</p>
+                            <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileButton">Remove</button>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('removeFileButton').addEventListener('click', function () {
+                    document.getElementById('templateContent').value = "";
+                    templateContent = null;
+                    fileCardContainer.innerHTML = "";
+                });
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+
+    document.getElementById('replyForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const formContainer = document.getElementById('formContainer');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        formContainer.classList.add('blurred');
+        loadingSpinner.classList.add('show');
+
+        const audience = document.getElementById('audience').value;
+        const tone = document.getElementById('tone').value;
+        const sentiment = document.getElementById('sentiment').value;
+        const emailType = document.getElementById('emailType').value;
+        const customerEmail = document.getElementById('customerEmail').value;
+
+        const replyPrompt = {
+            audience,
+            tone,
+            sentiment,
+            emailType,
+            customerEmail,
+            templateContent,
+            originalEmailBody
+        };
+
+        // 👇 Replace this with real fetch to Power Automate
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        loadingSpinner.classList.remove('show');
+        formContainer.classList.add('slide-up');
+
+        document.getElementById('emailPreview').innerHTML = `
+            <div class="card p-3 fade-in">
+                <h5 class="card-title">Generated Reply</h5>
+                <pre>${JSON.stringify(replyPrompt, null, 2)}</pre>
+                <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
+            </div>
+        `;
+
+        // Insert Reply Button logic
+        document.getElementById('insertReplyButton').addEventListener('click', function() {
+            const fakeGeneratedReply = "Dear Customer,\n\nThank you for reaching out. Here is the information you requested...\n\nBest regards,\nYour Name";
+
+            Office.context.mailbox.item.body.setSelectedDataAsync(
+                fakeGeneratedReply,
+                { coercionType: Office.CoercionType.Text },
+                function (asyncResult) {
+                    if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                        console.log('Reply inserted!');
+                    } else {
+                        console.error('Failed to insert reply:', asyncResult.error.message);
+                    }
+                }
+            );
+        });
+
+        document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+    });
+</script>
+
+
+</body>
+
+</html>
