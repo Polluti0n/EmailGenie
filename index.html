@@ -227,64 +227,76 @@
         }
     });
 
-    document.getElementById('replyForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
+    document.getElementById('replyForm').addEventListener('submit', async function (e) {document.getElementById('replyForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-        const formContainer = document.getElementById('formContainer');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+    const formContainer = document.getElementById('formContainer');
+    const loadingSpinner = document.getElementById('loadingSpinner');
 
-        formContainer.classList.add('blurred');
-        loadingSpinner.classList.add('show');
+    formContainer.classList.add('blurred');
+    loadingSpinner.classList.add('show');
 
-        const emailAudience = document.getElementById('emailAudience').value;
-        const emailTone = document.getElementById('emailTone').value;
-        const emailType = document.getElementById('emailType').value;
-        const emailDescription = document.getElementById('emailDescription').value;
+    const emailAudience = document.getElementById('emailAudience').value;
+    const emailTone = document.getElementById('emailTone').value;
+    const emailType = document.getElementById('emailType').value;
+    const emailDescription = document.getElementById('emailDescription').value;
 
-        const replyPrompt = {
-            "audience": emailAudience,
-            "tone": emailTone,
-            "type": emailType,
-            "description": emailDescription,
-            "template": templateContent,
-            "originalEmail": originalEmailBody
-        };
+    const replyPrompt = {
+        audience: emailAudience,
+        tone: emailTone,
+        type: emailType,
+        description: emailDescription,
+        template: templateContent,
+        originalEmail: originalEmailBody
+    };
 
-        console.log(replyPrompt)
+    let generatedReply = "";
 
-        // 👇 Replace this with real fetch to Power Automate
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        loadingSpinner.classList.remove('show');
-        formContainer.classList.add('slide-up');
-
-        document.getElementById('emailPreview').innerHTML = `
-            <div class="card p-3 shadow-sm fade-in">
-                <h5 class="card-title">Generated Reply</h5>
-                <pre>${JSON.stringify(replyPrompt, null, 2)}</pre>
-                <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
-            </div>
-        `;
-
-        // Insert Reply Button logic
-        document.getElementById('insertReplyButton').addEventListener('click', function() {
-            const fakeGeneratedReply = "Dear Customer,\n\nThank you for reaching out. Here is the information you requested...\n\nBest regards,\nYour Name";
-
-            Office.context.mailbox.item.body.setSelectedDataAsync(
-                fakeGeneratedReply,
-                { coercionType: Office.CoercionType.Text },
-                function (asyncResult) {
-                    if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
-                        console.log('Reply inserted!');
-                    } else {
-                        console.error('Failed to insert reply:', asyncResult.error.message);
-                    }
-                }
-            );
+    try {
+        const response = await fetch("https://prod-145.westus.logic.azure.com:443/workflows/c65d371e274a4a29a0daa3ee25ce63bd/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-skVHfpWefHb6DNSYMWTmkI3mEUObkxnK2wAvBwU-wg", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(replyPrompt)
         });
 
-        document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        const data = await response.json();
+        generatedReply = data.reply || "⚠️ No reply returned from flow.";
+    } catch (error) {
+        console.error("Error calling Power Automate:", error);
+        generatedReply = "⚠️ An error occurred while generating the reply.";
+    }
+
+    loadingSpinner.classList.remove('show');
+    formContainer.classList.add('slide-up');
+
+    document.getElementById('emailPreview').innerHTML = `
+        <div class="card p-3 shadow-sm fade-in">
+            <h5 class="card-title">Generated Reply</h5>
+            <pre>${generatedReply}</pre>
+            <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
+        </div>
+    `;
+
+    document.getElementById('insertReplyButton').addEventListener('click', function () {
+        Office.context.mailbox.item.body.setSelectedDataAsync(
+            generatedReply,
+            { coercionType: Office.CoercionType.Text },
+            function (asyncResult) {
+                if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                    console.log('Reply inserted!');
+                } else {
+                    console.error('Failed to insert reply:', asyncResult.error.message);
+                }
+            }
+        );
     });
+
+    document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
+});
 </script>
 
 
