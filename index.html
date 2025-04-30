@@ -90,8 +90,8 @@
 
             <!-- Audience -->
             <div class="mb-3">
-                <label for="audience" class="form-label">Replying to</label>
-                <select class="form-select" id="audience" required>
+                <label for="emailAudience" class="form-label">Replying to</label>
+                <select class="form-select" id="emailAudience" required>
                     <option value="">Select...</option>
                     <option value="Client">Client</option>
                     <option value="Coworker">Coworker</option>
@@ -101,9 +101,8 @@
 
             <!-- Tone -->
             <div class="mb-3">
-                <label for="tone" class="form-label">Tone</label>
-                <select class="form-select" id="tone" required>
-                    <option value="">Select...</option>
+                <label for="emailTone" class="form-label">Tone</label>
+                <select class="form-select" id="emailTone" required>
                     <option value="Professional">Professional</option>
                     <option value="Friendly">Friendly</option>
                     <option value="Apologetic">Apologetic</option>
@@ -113,11 +112,11 @@
                 </select>
             </div>
 
-            <!-- Sentiment -->
+            <!-- Type -->
             <div class="mb-3">
-                <label for="sentiment" class="form-label">Main Message Sentiment</label>
-                <select class="form-select" id="sentiment">
-                    <option value="">Select...</option>
+                <label for="emailType" class="form-label">Type</label>
+                <select class="form-select" id="emailType">
+                    <option value="Provide Update">General Reply</option>
                     <option value="Provide Update">Provide Update</option>
                     <option value="Request Information">Request Information</option>
                     <option value="Provide Account Information">Provide Account Information</option>
@@ -127,20 +126,20 @@
                 </select>
             </div>
 
-            <!-- Customer Email -->
+            <!-- Description -->
             <div class="mb-3">
-                <label for="emailContent" class="form-label">Brief Email Content</label>
-                <textarea class="form-control" id="emailContent" rows="4" required></textarea>
+                <label for="emailDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="emailDescription" rows="4" placeholder="Briefly describe the email you want to generate and include any specific details you want to be included such as dates or amounts." required></textarea>
             </div>
 
-            <!-- File Upload -->
+            <!-- Template -->
             <div class="mb-3">
                 <label for="templateContent" class="form-label">Optional Template</label>
                 <input type="file" class="form-control" id="templateContent">
                 <div id="fileCardContainer" class="mt-3"></div>
             </div>
 
-            <!-- Collapsible Template Preview -->
+            <!-- Collapsible Template Preview
             <div class="mb-3">
                 <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
                     data-bs-target="#templatePreviewContainer" aria-expanded="false"
@@ -154,6 +153,7 @@
                     </div>
                 </div>
             </div>
+            -->
 
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Generate Reply</button>
@@ -163,7 +163,7 @@
 
     <!-- Generated JSON -->
     <h2 class="mt-5">Generated Email Preview</h2>
-    <div id="emailPreview" class="card p-4 shadow-sm bg-light" style="white-space: pre-wrap;"></div>
+    <div id="emailPreview" class="card p-4 shadow-sm bg-light fade" style="white-space: pre-wrap;"></div>
 
     
     <!-- Office.js (MUST be loaded first for Outlook Add-ins) -->
@@ -253,20 +253,17 @@
         formContainer.classList.add('blurred');
         loadingSpinner.classList.add('show');
 
-        const audience = document.getElementById('audience').value;
-        const tone = document.getElementById('tone').value;
-        const sentiment = document.getElementById('sentiment').value;
+        const emailAudience = document.getElementById('emailAudience').value;
+        const emailTone = document.getElementById('emailTone').value;
         const emailType = document.getElementById('emailType').value;
-        const customerEmail = document.getElementById('customerEmail').value;
+        const emailDescription = document.getElementById('emailDescription').value;
 
         const replyPrompt = {
-            audience,
-            tone,
-            sentiment,
-            emailType,
-            customerEmail,
-            templateContent,
-            originalEmailBody
+            "audience": emailAudience,
+            "tone": emailTone,
+            "type": emailType,
+            "description": emailDescription,
+            "template": templateContent,
         };
 
         // 👇 Replace this with real fetch to Power Automate
