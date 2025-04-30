@@ -129,7 +129,7 @@
             <!-- Description -->
             <div class="mb-3">
                 <label for="emailDescription" class="form-label">Description</label>
-                <textarea class="form-control" id="emailDescription" rows="4" placeholder="Briefly describe the email you want to generate and include any specific details you want to be included such as dates or amounts." required></textarea>
+                <textarea class="form-control" id="emailDescription" rows="4" placeholder="Summarize the email you want to generate."></textarea>
             </div>
 
             <!-- Template -->
@@ -139,22 +139,6 @@
                 <div id="fileCardContainer" class="mt-3"></div>
             </div>
 
-            <!-- Collapsible Template Preview
-            <div class="mb-3">
-                <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#templatePreviewContainer" aria-expanded="false"
-                    aria-controls="templatePreviewContainer" id="previewButton" disabled>
-                    Preview Uploaded Template
-                </button>
-
-                <div class="collapse mt-2" id="templatePreviewContainer">
-                    <div class="card card-body">
-                        <pre id="templatePreview" class="mb-0"></pre>
-                    </div>
-                </div>
-            </div>
-            -->
-
             <!-- Submit Button -->
             <button type="submit" class="btn btn-primary">Generate Reply</button>
 
@@ -162,8 +146,7 @@
     </div>
 
     <!-- Generated JSON -->
-    <h2 class="mt-5">Generated Email Preview</h2>
-    <div id="emailPreview" class="card p-4 shadow-sm bg-light fade" style="white-space: pre-wrap;"></div>
+    <div id="emailPreview"></div>
 
     
     <!-- Office.js (MUST be loaded first for Outlook Add-ins) -->
@@ -276,7 +259,7 @@
         formContainer.classList.add('slide-up');
 
         document.getElementById('emailPreview').innerHTML = `
-            <div class="card p-3 fade-in">
+            <div class="card p-3 shadow-sm fade-in">
                 <h5 class="card-title">Generated Reply</h5>
                 <pre>${JSON.stringify(replyPrompt, null, 2)}</pre>
                 <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
