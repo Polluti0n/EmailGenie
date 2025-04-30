@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:type="MailApp">
+<OfficeApp 
+          xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+          xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides"
+          xsi:type="MailApp">
 
   <Id>0426c831-f861-456a-9741-69259cac928c</Id>
   <Version>1.0.0.0</Version>
@@ -39,29 +42,6 @@
     </Form>
   </FormSettings>
 
-  <ExtensionPoint xsi:type="MessageComposeCommandSurface">
-    <OfficeCommandSurface>
-      <Control xsi:type="Button" id="msgComposeOpenPaneButton">
-        <Label resid="paneButtonLabel" />
-        <Supertip>
-          <Title resid="paneButtonLabel" />
-          <Description resid="paneButtonDesc" />
-        </Supertip>
-        <Icon>
-          <bt:Image size="16" resid="icon16" />
-          <bt:Image size="32" resid="icon32" />
-          <bt:Image size="80" resid="icon80" />
-        </Icon>
-        <Action xsi:type="ShowTaskpane">
-          <SourceLocation resid="taskpaneUrl" />
-        </Action>
-      </Control>
-    </OfficeCommandSurface>
-    <Events>
-      <Event Type="OnMessageCompose" FunctionName="onMessageComposeHandler" />
-    </Events>
-  </ExtensionPoint>
-
   <Permissions>ReadWriteItem</Permissions>
 
   <Rule xsi:type="RuleCollection" Mode="Or">
@@ -71,6 +51,72 @@
 
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
 
+  <!-- VersionOverrides: with DesktopFormFactor -->
+<VersionOverrides 
+  xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xsi:type="VersionOverridesV1_0">
+
+  <Requirements>
+    <bt:Sets DefaultMinVersion="1.8">
+      <bt:Set Name="Mailbox"/>
+    </bt:Sets>
+  </Requirements>
+
+  <Hosts>
+    <Host xsi:type="MailHost">
+      <DesktopFormFactor>
+
+        <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+          <OfficeTab id="Message">
+            <Group id="msgComposeGroup">
+              <Label resid="groupLabel"/>
+              <Control xsi:type="Button" id="msgComposeButton">
+                <Label resid="buttonLabel"/>
+                <Supertip>
+                  <Title resid="superTipTitle"/>
+                  <Description resid="superTipDescription"/>
+                </Supertip>
+                <Icon>
+                  <bt:Image size="16" resid="icon16"/>
+                  <bt:Image size="32" resid="icon32"/>
+                  <bt:Image size="80" resid="icon80"/>
+                </Icon>
+                <Action xsi:type="ShowTaskpane">
+                  <SourceLocation resid="taskPaneUrl"/>
+                </Action>
+              </Control>
+            </Group>
+          </OfficeTab>
+        </ExtensionPoint>
+
+        <ExtensionPoint xsi:type="MessageReadCommandSurface">
+          <OfficeTab id="MessageRead">
+            <Group id="msgReadGroup">
+              <Label resid="groupLabel"/>
+              <Control xsi:type="Button" id="msgReadButton">
+                <Label resid="buttonLabel"/>
+                <Supertip>
+                  <Title resid="superTipTitle"/>
+                  <Description resid="superTipDescription"/>
+                </Supertip>
+                <Icon>
+                  <bt:Image size="16" resid="icon16"/>
+                  <bt:Image size="32" resid="icon32"/>
+                  <bt:Image size="80" resid="icon80"/>
+                </Icon>
+                <Action xsi:type="ShowTaskpane">
+                  <SourceLocation resid="taskPaneUrl"/>
+                </Action>
+              </Control>
+            </Group>
+          </OfficeTab>
+        </ExtensionPoint>
+
+      </DesktopFormFactor>
+    </Host>
+  </Hosts>
+
   <Resources>
     <bt:Images>
       <bt:Image id="icon16" DefaultValue="https://polluti0n.github.io/EmailGenie/assets/icon-16.png"/>
@@ -78,12 +124,19 @@
       <bt:Image id="icon80" DefaultValue="https://polluti0n.github.io/EmailGenie/assets/icon-80.png"/>
     </bt:Images>
     <bt:Urls>
-      <bt:Url id="taskpaneUrl" DefaultValue="https://polluti0n.github.io/EmailGenie/index.html"/>
+      <bt:Url id="taskPaneUrl" DefaultValue="https://polluti0n.github.io/EmailGenie/index.html"/>
     </bt:Urls>
-    <bt:Strings>
-      <bt:String id="paneButtonLabel" DefaultValue="Open EmailGenie"/>
-      <bt:String id="paneButtonDesc" DefaultValue="Launch EmailGenie to help draft your reply."/>
-    </bt:Strings>
+    <bt:ShortStrings>
+      <bt:String id="groupLabel" DefaultValue="EmailGenie"/>
+      <bt:String id="buttonLabel" DefaultValue="Open Genie"/>
+      <bt:String id="superTipTitle" DefaultValue="EmailGenie Reply Assistant"/>
+    </bt:ShortStrings>
+    <bt:LongStrings>
+      <bt:String id="superTipDescription" DefaultValue="Open the task pane to generate a reply using EmailGenie."/>
+    </bt:LongStrings>
   </Resources>
+
+</VersionOverrides>
+
 
 </OfficeApp>
