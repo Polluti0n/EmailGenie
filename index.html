@@ -278,18 +278,24 @@
           `;
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
-            const item = Office.context.mailbox.item;
+            
             const insertReplyHtml = `<p>${result.replyText}</p><br>`;
-
-            if (item.body) {
-              // Already in compose mode
-              item.body.getAsync(Office.CoercionType.Html, (res) => {
-                if (res.status === Office.AsyncResultStatus.Succeeded) {
-                  const currentBody = res.value;
-                  const newBody = insertReplyHtml + currentBody;
-                  item.body.setAsync(newBody, { coercionType: Office.CoercionType.Html });
+            const item = Office.context.mailbox.item;
+  
+            if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message &&
+                typeof item.body.setSelectedDataAsync === "function") {
+              // Compose mode: insert text directly
+              item.body.setSelectedDataAsync(
+                result.replyText,
+                { coercionType: Office.CoercionType.Text },
+                function (asyncResult) {
+                  if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                    console.log('Reply inserted!');
+                  } else {
+                    console.error('Failed to insert reply:', asyncResult.error.message);
+                  }
                 }
-              });
+              );
             } else {
               // Not in compose mode, launch new message
               Office.context.mailbox.displayNewMessageForm({
