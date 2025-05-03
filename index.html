@@ -277,39 +277,34 @@
             </div>
           `;
 
-          document.getElementById("insertReplyButton").onclick = function () {
-            const item = Office.context.mailbox.item;
+          document.getElementById('insertReplyButton').addEventListener('click', function () {
+            
             const insertReplyHtml = `<p>${result.replyText}</p><br>`;
-
-            const insertWithSignature = (bodyText) => {
-              const finalBody = insertReplyHtml + bodyText;
-              item.body.setAsync(finalBody, { coercionType: Office.CoercionType.Html });
-            };
-
-            if (item.body) {
-              // Already in compose mode
-              item.body.getAsync(Office.CoercionType.Html, (res) => {
-                if (res.status === Office.AsyncResultStatus.Succeeded) {
-                  insertWithSignature(res.value);
+            const item = Office.context.mailbox.item;
+  
+            if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message &&
+                typeof item.body.setSelectedDataAsync === "function") {
+              // Compose mode: insert text directly
+              item.body.setSelectedDataAsync(
+                result.replyText,
+                { coercionType: Office.CoercionType.Text },
+                function (asyncResult) {
+                  if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                    console.log('Reply inserted!');
+                  } else {
+                    console.error('Failed to insert reply:', asyncResult.error.message);
+                  }
                 }
-              });
+              );
             } else {
-              // Not in compose mode
-              if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message) {
-                // Reply mode
-                item.displayReplyForm();
-                console.log("Reply Mode")
-              } else {
-                // New message
-                Office.context.mailbox.displayNewMessageForm({
-                  toRecipients: [],
-                  subject: "",
-                  htmlBody: insertReplyHtml // Signature gets appended automatically by Outlook
-                });
-                console.log("New Message Mode")
-              }
+              // Not in compose mode, launch new message
+              Office.context.mailbox.displayNewMessageForm({
+                toRecipients: [],
+                subject: "",
+                htmlBody: insertReplyHtml
+              });
             }
-          };
+          });
 
           document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
         } else {
