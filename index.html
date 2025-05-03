@@ -278,17 +278,26 @@
           `;
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
-            Office.context.mailbox.item.body.setSelectedDataAsync(
-              result.replyText,
-              { coercionType: Office.CoercionType.Text },
-              function (asyncResult) {
-                if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
-                  console.log('Reply inserted!');
-                } else {
-                  console.error('Failed to insert reply:', asyncResult.error.message);
+            const item = Office.context.mailbox.item;
+            const isCompose = item.body !== undefined;
+
+            if (isCompose) {
+              // In compose mode: Insert reply at the top
+              Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, (res) => {
+                if (res.status === Office.AsyncResultStatus.Succeeded) {
+                  const currentBody = res.value;
+                  const newBody = result.replyText + currentBody;
+                  Office.context.mailbox.item.body.setAsync(newBody, { coercionType: Office.CoercionType.Html });
                 }
-              }
-            );
+              });
+            } else {
+              // Not in compose mode: open new message and insert reply
+              Office.context.mailbox.displayNewMessageForm({
+                toRecipients: [],
+                subject: "",
+                htmlBody: result.replyText
+              });
+            }
           });
 
           document.getElementById('emailPreview').scrollIntoView({ behavior: 'smooth' });
