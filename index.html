@@ -298,6 +298,7 @@
               if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message) {
                 // Reply mode
                 item.displayReplyForm();
+                console.log("Reply Mode")
               } else {
                 // New message
                 Office.context.mailbox.displayNewMessageForm({
@@ -305,6 +306,7 @@
                   subject: "",
                   htmlBody: insertReplyHtml // Signature gets appended automatically by Outlook
                 });
+                console.log("New Message Mode")
               }
             }
           };
