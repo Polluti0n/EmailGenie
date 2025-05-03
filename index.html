@@ -279,23 +279,23 @@
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
             const item = Office.context.mailbox.item;
-            const isCompose = item.body !== undefined;
+            const insertReplyHtml = `<p>${result.replyText}</p><br>`;
 
-            if (isCompose) {
-              // In compose mode: Insert reply at the top
-              Office.context.mailbox.item.body.getAsync(Office.CoercionType.Html, (res) => {
+            if (item.body) {
+              // Already in compose mode
+              item.body.getAsync(Office.CoercionType.Html, (res) => {
                 if (res.status === Office.AsyncResultStatus.Succeeded) {
                   const currentBody = res.value;
-                  const newBody = result.replyText + currentBody;
-                  Office.context.mailbox.item.body.setAsync(newBody, { coercionType: Office.CoercionType.Html });
+                  const newBody = insertReplyHtml + currentBody;
+                  item.body.setAsync(newBody, { coercionType: Office.CoercionType.Html });
                 }
               });
             } else {
-              // Not in compose mode: open new message and insert reply
+              // Not in compose mode, launch new message
               Office.context.mailbox.displayNewMessageForm({
                 toRecipients: [],
                 subject: "",
-                htmlBody: result.replyText
+                htmlBody: insertReplyHtml
               });
             }
           });
