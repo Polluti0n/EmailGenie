@@ -80,7 +80,6 @@
   <div id="formContainer">
     <form id="replyForm">
       <div class="mb-3 form-floating">
-        <label for="emailAudience" class="form-label">Replying to</label>
         <select class="form-select" id="emailAudience" required>
           <option value="">Select...</option>
           <option value="Client">Client</option>
@@ -88,6 +87,7 @@
           <option value="Corporate">Corporate</option>
           <option value="Other">Other</option>
         </select>
+        <label for="emailAudience">Replying to</label>
         <input type="text" class="form-control mt-2 d-none" id="audienceOther" placeholder="Enter other audience" />
       </div>
 
