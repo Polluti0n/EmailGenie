@@ -92,7 +92,6 @@
       </div>
 
       <div class="mb-3 form-floating">
-        <label for="emailTone" class="form-label">Tone</label>
         <select class="form-select" id="emailTone" required>
           <option value="Professional">Professional</option>
           <option value="Friendly">Friendly</option>
@@ -102,11 +101,11 @@
           <option value="Direct">Direct</option>
           <option value="Other">Other</option>
         </select>
+        <label for="emailTone">Tone</label>        
         <input type="text" class="form-control mt-2 d-none" id="toneOther" placeholder="Enter other tone" />
       </div>
 
       <div class="mb-3 form-floating">
-        <label for="emailType" class="form-label">Type</label>
         <select class="form-select" id="emailType">
           <option value="Provide Update">General Reply</option>
           <option value="Provide Update">Provide Update</option>
@@ -117,13 +116,14 @@
           <option value="Approve Request">Approve Request</option>
           <option value="Other">Other</option>
         </select>
+        <label for="emailType">Type</label>        
         <input type="text" class="form-control mt-2 d-none" id="typeOther" placeholder="Enter other type" />
       </div>
 
       <div class="mb-3 form-floating">
-        <label for="emailDescription" class="form-label">Description</label>
         <textarea class="form-control" id="emailDescription" rows="4"
           placeholder="Summarize the email you want to generate."></textarea>
+        <label for="emailDescription">Description</label>          
       </div>
 
       <div class="mb-3">
