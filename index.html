@@ -315,6 +315,14 @@
       showOtherInput("emailTone", "toneOther");
       showOtherInput("emailType", "typeOther");
 
+      let templateContent = ""
+      const templateDiv = document.getElementById("templateContent");
+      templateDiv.addEventListener('paste', (event) => {
+        event.preventDefault();
+        templateContent = event.clipboardData.getData('text/plain');
+        templateDiv.innerHTML = event.clipboardData.getData('text/html');
+});
+
       // document
       //   .getElementById("templateContent")
       //   .addEventListener("change", function (e) {
@@ -395,11 +403,6 @@
 
           const emailDescription =
             document.getElementById("emailDescription").value;
-
-          const templateText = document.createElement('div');
-          templateText.setAttribute('contenteditable', 'plaintext-only');
-          templateText.innerHTML = document.getElementById("templateContent").innerHTML || "";
-          const templateContent = templateText.innerHTML
 
           const replyPrompt = {
             audience: emailAudience,
