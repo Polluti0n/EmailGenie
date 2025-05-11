@@ -243,7 +243,7 @@
       </div>
     </div>
 
-    <div id="emailPreview"></div>
+    <div id="emailPreview" class="view"></div>
 
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <!--
@@ -321,7 +321,7 @@
           if (file) {
             const maxSize = 5 * 1024 * 1024;
             if (file.size > maxSize) {
-              alert("File too large. Max 5MB.");
+              console.log("File too large. Max 5MB.");
               e.target.value = "";
               templateContent = null;
               fileCardContainer.innerHTML = "";
@@ -369,6 +369,7 @@
 
           const formContainer = document.getElementById("formContainer");
           const loadingSpinner = document.getElementById("loadingSpinner");
+          const previewEmail = document.getElementById("emailPreview")
 
           formContainer.classList.add("blurred");
           loadingSpinner.classList.add("show");
@@ -414,15 +415,16 @@
 
             if (result.success && result.reply) {
               loadingSpinner.classList.remove("show");
-              formContainer.classList.add("slide-up");
+              formContainer.classList.remove("active");
+              previewEmail.classList.add("active")
             
               if (Office.context.roamingSettings.get("includeSignature")) {
-                const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature
-                const newBody = convertEscapedToHtml(result.reply.body) + "<br>" + signature
+                const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature;
+                const newBody = convertEscapedToHtml(result.reply.body) + "<br>" + signature;
                 result.reply.body = newBody
               }
               
-              document.getElementById("emailPreview").innerHTML = `
+              previewEmail.innerHTML = `
             <div class="card-body fade-in">
                 <h2 class="mb-4">Generated Reply</h2>
                 <label class="mb-1">Subject:</label>
@@ -500,18 +502,19 @@
               document
                 .getElementById("cancelReplyButton")
                 .addEventListener("click", function () {
-                  document.getElementById("emailPreview").innerHTML = ``
-                  goHome()
+                  previewEmail.innerHTML = "";
+                  goHome();
                 })
+
               document
                 .getElementById("emailPreview")
                 .scrollIntoView({ behavior: "smooth" });
             } else {
-              alert("Something went wrong. No reply text received.");
+              console.log("Something went wrong. No reply text received.");
             }
           } catch (err) {
             console.error("Fetch error:", err);
-            alert("An error occurred while generating the reply.");
+            console.log("An error occurred while generating the reply.");
           }
         });
 
@@ -527,11 +530,6 @@
           .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
       }
 
-      /**
-       * Escapes HTML special characters to avoid injection issues
-       * @param {string} str
-       * @returns {string}
-       */
       function escapeHtml(str) {
         return str
           .replace(/&/g, "&amp;")
