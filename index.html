@@ -415,7 +415,13 @@
             if (result.success && result.reply) {
               loadingSpinner.classList.remove("show");
               formContainer.classList.add("slide-up");
-
+            
+              if (Office.context.roamingSettings.get(includeSignature)) {
+                const signature = Office.context.roamingSettings.get(signatureHtml) || result.reply.signature
+                const newBody = result.reply.body + signature
+                result.reply.body = newBody
+              }
+              
               document.getElementById("emailPreview").innerHTML = `
             <div class="fade-in">
               <h5 class="card-title mb-3">Generated Reply</h5>
