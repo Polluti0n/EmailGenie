@@ -280,7 +280,7 @@
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
             
-            const insertReplyHtml = `${result.reply.body}<br>`;
+            const insertReplyHtml = convertEscapedToHtml(result.reply.body);
             const item = Office.context.mailbox.item;
   
             if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message &&
@@ -320,6 +320,32 @@
         alert("An error occurred while generating the reply.");
       }
     });
+
+    function convertEscapedToHtml(input, options = {}) {
+        if (!input || typeof input !== 'string') return '';
+
+        if (options.usePre) {
+          return `<pre>${escapeHtml(input)}</pre>`;
+        }
+
+        return escapeHtml(input)
+          .replace(/\n/g, '<br>')
+          .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+      }
+
+      /**
+       * Escapes HTML special characters to avoid injection issues
+       * @param {string} str
+       * @returns {string}
+       */
+      function escapeHtml(str) {
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
   </script>
 </body>
 
