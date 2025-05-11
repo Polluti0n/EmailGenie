@@ -4,8 +4,21 @@
 <head>
   <meta charset="UTF-8" />
   <title>Email Reply Generator</title>
+  <!--
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+
   <style>
+
+    .view { display: none; }
+    .view.active { display: block; }
+    #signatureInput {
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-height: 100px;
+    }
+
     .blurred {
       filter: blur(4px);
       pointer-events: none;
@@ -69,15 +82,25 @@
 </head>
 
 <body class="p-4">
-  <h1 class="mb-4">Generate Email</h1>
-
   <div id="loadingSpinner" class="d-flex justify-content-center align-items-center fade">
     <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
       <span class="visually-hidden">Loading...</span>
     </div>
   </div>
 
+  <div id="settingsContainer">
+  <h5 class="card-title mb-3">Settings</h5>
+  <div class="card">
+    <div class="card-body" id="signatureInput" contenteditable="true">
+      Paste your Outlook signature here...
+    </div>
+  </div>
+    <button onclick="saveSignature()">Save</button>
+    <button onclick="goBack()">Back</button>
+  </div>
+
   <div id="formContainer">
+    <h5 class="card-title mb-3">Reply Details</h5>
     <form id="replyForm">
       <div class="mb-3 form-floating">
         <select class="form-select" id="emailAudience" required>
@@ -139,7 +162,10 @@
   <div id="emailPreview"></div>
 
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <!--
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 
   <script>
     let templateContent = null;
@@ -270,8 +296,8 @@
           formContainer.classList.add('slide-up');
 
           document.getElementById('emailPreview').innerHTML = `
-            <div class="card p-3 shadow-sm fade-in">
-              <h5 class="card-title">Generated Reply</h5>
+            <div class="fade-in">
+              <h5 class="card-title mb-3">Generated Reply</h5>
               <pre>Subject: ${result.reply.subject}</pre>
               <pre>Body: ${result.reply.body}</pre>
               <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
