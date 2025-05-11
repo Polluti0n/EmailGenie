@@ -110,7 +110,7 @@
             <span class="col">Include Signature</span>
             <span class="col-auto">
               <label class="form-check form-check-single form-switch">
-                <input class="form-check-input" type="checkbox" checked="" />
+                <input id="includeSigChk" class="form-check-input" type="checkbox" checked="" />
               </label>
             </span>
           </label>
@@ -507,19 +507,23 @@
 
       function closeSettings() {
         document.querySelector('.view.active').classList.remove('active');
-        document.getElementById("mainView").classList.add("active");
+        document.getElementById("formContainer").classList.add("active");
       }
 
       function saveSettings() {
         const signatureHtml =
           document.getElementById("signatureInput").innerHTML;
+        const signatureSwitch =
+          document.getElementById("includeSigChk").checked;
+          
         Office.context.roamingSettings.set("userSignature", signatureHtml);
+        Office.content.roamingSettings.set("includeSignature", signatureSwitch);
         Office.context.roamingSettings.saveAsync((result) => {
           if (result.status === Office.AsyncResultStatus.Succeeded) {
-            console.log("Signature saved successfully.");
+            console.log("Settings saved successfully.");
             goBack();
           } else {
-            console.log("Failed to save signature.");
+            console.log("Failed to save settings.");
           }
         });
         closeSettings()
