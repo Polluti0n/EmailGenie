@@ -418,7 +418,7 @@
             
               if (Office.context.roamingSettings.get("includeSignature")) {
                 const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature
-                const newBody = result.reply.body + "<br>" + signature
+                const newBody = convertEscapedToHtml(result.reply.body) + "<br>" + signature
                 result.reply.body = newBody
               }
               
@@ -443,9 +443,6 @@
               document
                 .getElementById("insertReplyButton")
                 .addEventListener("click", function () {
-                  const insertReplyHtml = `<p>${convertEscapedToHtml(
-                    result.reply.body
-                  )}</p>`;
                   const item = Office.context.mailbox.item;
 
                   if (
@@ -475,7 +472,7 @@
                     // Not in compose mode, launch new message
                     Office.context.mailbox.item.displayReplyAllFormAsync(
                       {
-                        htmlBody: insertReplyHtml,
+                        htmlBody: result.reply.body,
                       },
                       function (asyncResult) {
                         if (
