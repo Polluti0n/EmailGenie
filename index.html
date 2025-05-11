@@ -283,7 +283,7 @@
 
         const backBtn = document.getElementById("cancelSettingsBtn");
         if (backBtn) {
-          backBtn.onclick = closeSettings;
+          backBtn.onclick = goHome;
         }
       });
 
@@ -430,13 +430,19 @@
                   <div class="card-body overflow-scroll">
                     ${result.reply.subject}
                   </div>
+                </div>
                 <label class="mb-1">Body:</label>
                 <div class="card mb-3">
                   <div class="card-body overflow-scroll">
                     ${result.reply.body}
                   </div>
                 </div>
-              <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
+              <div class="card-footer bg-transparent mt-auto">
+              <div class="btn-list justify-content-end">
+                <a href="#" class="btn btn-1" id="cancelReplyButton">Cancel</a>
+                <a href="#" class="btn btn-success btn-2" id="insertReplyButton">Insert into Email</a>
+              </div>
+            </div>
             </div>
           `;
 
@@ -492,6 +498,12 @@
                 });
 
               document
+                .getElementById("cancelReplyButton")
+                .addEventListener("click", function () {
+                  document.getElementById("emailPreview").innerHTML = ``
+                  goHome()
+                })
+              document
                 .getElementById("emailPreview")
                 .scrollIntoView({ behavior: "smooth" });
             } else {
@@ -537,7 +549,7 @@
         document.getElementById("signatureInput").innerHTML = signatureHtml;
       }
 
-      function closeSettings() {
+      function goHome() {
         document.querySelector(".view.active").classList.remove("active");
         document.getElementById("formContainer").classList.add("active");
       }
@@ -554,13 +566,13 @@
         Office.context.roamingSettings.saveAsync((result) => {
           if (result.status === Office.AsyncResultStatus.Succeeded) {
             console.log("Settings saved successfully.");
-            closeSettings();
+            goHome();
           } else {
             console.log("Failed to save settings.");
           }
         });
 
-        closeSettings();
+        goHome();
       }
     </script>
   </body>
