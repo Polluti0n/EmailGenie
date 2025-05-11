@@ -417,7 +417,7 @@
               formContainer.classList.add("slide-up");
             
               if (Office.context.roamingSettings.get("includeSignature")) {
-                const signature = Office.context.roamingSettings.get("signatureHtml") || result.reply.signature
+                const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature
                 const newBody = result.reply.body + signature
                 result.reply.body = newBody
               }
