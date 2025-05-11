@@ -537,15 +537,17 @@
           document.getElementById("includeSigChk").checked;
 
         Office.context.roamingSettings.set("userSignature", signatureHtml);
-        Office.content.roamingSettings.set("includeSignature", signatureSwitch);
+        Office.context.roamingSettings.set("includeSignature", signatureSwitch);
+
         Office.context.roamingSettings.saveAsync((result) => {
           if (result.status === Office.AsyncResultStatus.Succeeded) {
             console.log("Settings saved successfully.");
-            goBack();
+            goBack(); // <-- assuming this is defined elsewhere
           } else {
             console.log("Failed to save settings.");
           }
         });
+
         closeSettings();
       }
     </script>
