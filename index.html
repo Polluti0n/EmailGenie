@@ -298,10 +298,11 @@
               );
             } else {
               // Not in compose mode, launch new message
-              Office.context.mailbox.displayNewMessageForm({
-                toRecipients: [],
-                subject: "",
-                htmlBody: insertReplyHtml
+              Office.context.mailbox.item.displayReplyAllFormAsync({
+                htmlBody: result.replyText,}, function(
+                asyncResult
+              ) {
+                console.log(JSON.stringify(asyncResult));
               });
             }
           });
