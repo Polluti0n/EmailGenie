@@ -415,7 +415,7 @@
 
             if (result.success && result.reply) {
               loadingSpinner.classList.remove("show");
-              formContainer.classList.remove("active");
+              formContainer.classList.remove("active", "blurred");
               previewEmail.classList.add("active")
             
               if (Office.context.roamingSettings.get("includeSignature")) {
