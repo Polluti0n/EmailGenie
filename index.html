@@ -229,10 +229,14 @@
 
             <div class="mb-3">
               <label for="templateContent" class="form-label"
-                >Optional Template</label
-              >
-              <input type="file" class="form-control" id="templateContent" />
+                >Optional Template</label>
+                <div class="col overflow-scroll" id="templateContent" contenteditable="true">
+            Paste template content here...
+            </div>
+          <!--
+          <input type="file" class="form-control" id="templateContent" />
               <div id="fileCardContainer" class="mt-3"></div>
+          -->
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -252,7 +256,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
 
     <script>
-      let templateContent = null;
+   //   let templateContent = null;
       let originalEmailBody = "";
 
       Office.onReady((info) => {
@@ -311,56 +315,56 @@
       showOtherInput("emailTone", "toneOther");
       showOtherInput("emailType", "typeOther");
 
-      document
-        .getElementById("templateContent")
-        .addEventListener("change", function (e) {
-          const file = e.target.files[0];
-          const fileCardContainer =
-            document.getElementById("fileCardContainer");
+      // document
+      //   .getElementById("templateContent")
+      //   .addEventListener("change", function (e) {
+      //     const file = e.target.files[0];
+      //     const fileCardContainer =
+      //       document.getElementById("fileCardContainer");
 
-          if (file) {
-            const maxSize = 5 * 1024 * 1024;
-            if (file.size > maxSize) {
-              console.log("File too large. Max 5MB.");
-              e.target.value = "";
-              templateContent = null;
-              fileCardContainer.innerHTML = "";
-              return;
-            }
+      //     if (file) {
+      //       const maxSize = 5 * 1024 * 1024;
+      //       if (file.size > maxSize) {
+      //         console.log("File too large. Max 5MB.");
+      //         e.target.value = "";
+      //         templateContent = null;
+      //         fileCardContainer.innerHTML = "";
+      //         return;
+      //       }
 
-            const reader = new FileReader();
-            reader.onload = function (event) {
-              templateContent = {
-                fileName: file.name,
-                fileType: file.type,
-                fileSize: file.size,
-                base64Content: event.target.result.split(",")[1],
-              };
+      //       const reader = new FileReader();
+      //       reader.onload = function (event) {
+      //         templateContent = {
+      //           fileName: file.name,
+      //           fileType: file.type,
+      //           fileSize: file.size,
+      //           base64Content: event.target.result.split(",")[1],
+      //         };
 
-              const fileSizeKB = (file.size / 1024).toFixed(1);
-              fileCardContainer.innerHTML = `
-            <div class="card shadow-sm fade-in">
-              <div class="card-body">
-                <h5 class="card-title">${file.name}</h5>
-                <p><strong>Size:</strong> ${fileSizeKB} KB</p>
-                <p><strong>Type:</strong> ${file.type || "Unknown"}</p>
-                <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileButton">Remove</button>
-              </div>
-            </div>
-          `;
+      //         const fileSizeKB = (file.size / 1024).toFixed(1);
+      //         fileCardContainer.innerHTML = `
+      //       <div class="card shadow-sm fade-in">
+      //         <div class="card-body">
+      //           <h5 class="card-title">${file.name}</h5>
+      //           <p><strong>Size:</strong> ${fileSizeKB} KB</p>
+      //           <p><strong>Type:</strong> ${file.type || "Unknown"}</p>
+      //           <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileButton">Remove</button>
+      //         </div>
+      //       </div>
+      //     `;
 
-              document
-                .getElementById("removeFileButton")
-                .addEventListener("click", function () {
-                  document.getElementById("templateContent").value = "";
-                  templateContent = null;
-                  fileCardContainer.innerHTML = "";
-                });
-            };
+      //         document
+      //           .getElementById("removeFileButton")
+      //           .addEventListener("click", function () {
+      //             document.getElementById("templateContent").value = "";
+      //             templateContent = null;
+      //             fileCardContainer.innerHTML = "";
+      //           });
+      //       };
 
-            reader.readAsDataURL(file);
-          }
-        });
+      //       reader.readAsDataURL(file);
+      //     }
+      //   });
 
       document
         .getElementById("replyForm")
@@ -391,6 +395,9 @@
 
           const emailDescription =
             document.getElementById("emailDescription").value;
+
+          const template =
+            document.getElementById("templateContent").innerHTML;
 
           const replyPrompt = {
             audience: emailAudience,
