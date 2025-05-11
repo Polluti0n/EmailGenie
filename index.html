@@ -272,21 +272,22 @@
           document.getElementById('emailPreview').innerHTML = `
             <div class="card p-3 shadow-sm fade-in">
               <h5 class="card-title">Generated Reply</h5>
-              <pre>${result.replyText}</pre>
+              <pre>Subject: ${result.reply.subject}</pre>
+              <pre>Body: ${result.reply.body}</pre>
               <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
             </div>
           `;
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
             
-            const insertReplyHtml = `<p>${result.replyText}</p><br>`;
+            const insertReplyHtml = `<p>${result.reply.body}</p><br>`;
             const item = Office.context.mailbox.item;
   
             if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message &&
                 typeof item.body.setSelectedDataAsync === "function") {
               // Compose mode: insert text directly
               item.body.setSelectedDataAsync(
-                result.replyText,
+                result.reply.body,
                 { coercionType: Office.CoercionType.Text },
                 function (asyncResult) {
                   if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
@@ -299,11 +300,13 @@
             } else {
               // Not in compose mode, launch new message
               Office.context.mailbox.item.displayReplyAllFormAsync({
-                htmlBody: result.replyText,}, function(
-                asyncResult
-              ) {
-                console.log(JSON.stringify(asyncResult));
-              });
+                htmlBody: result.reply.body}, function (asyncResult) {
+                  if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+                    console.log('Reply inserted!');
+                  } else {
+                    console.error('Failed to insert reply:', asyncResult.error.message);
+                  }
+                });
             }
           });
 
