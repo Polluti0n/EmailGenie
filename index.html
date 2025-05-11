@@ -432,7 +432,7 @@
             
               if (Office.context.roamingSettings.get("includeSignature")) {
                 const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature;
-                const newBody = convertEscapedToHtml(result.reply.body) + "<br>" + signature;
+                const newBody = result.reply.body + "<br>" + signature;
                 result.reply.body = newBody
               }
               
