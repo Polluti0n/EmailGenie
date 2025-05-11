@@ -418,15 +418,24 @@
             
               if (Office.context.roamingSettings.get("includeSignature")) {
                 const signature = Office.context.roamingSettings.get("userSignature") || result.reply.signature
-                const newBody = result.reply.body + signature
+                const newBody = result.reply.body + "<br>" + signature
                 result.reply.body = newBody
               }
               
               document.getElementById("emailPreview").innerHTML = `
-            <div class="fade-in">
-              <h5 class="card-title mb-3">Generated Reply</h5>
-              <pre>Subject: ${result.reply.subject}</pre>
-              <pre>Body: ${result.reply.body}</pre>
+            <div class="card-body fade-in">
+                <h2 class="mb-4">Generated Reply</h2>
+                <label class="mb-1">Subject:</label>
+                <div class="card mb-3">
+                  <div class="card-body overflow-scroll">
+                    ${result.reply.subject}
+                  </div>
+                <label class="mb-1">Body:</label>
+                <div class="card mb-3">
+                  <div class="card-body overflow-scroll">
+                    ${result.reply.body}
+                  </div>
+                </div>
               <button class="btn btn-success mt-3" id="insertReplyButton">Insert into Email</button>
             </div>
           `;
