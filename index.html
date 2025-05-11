@@ -280,7 +280,7 @@
 
           document.getElementById('insertReplyButton').addEventListener('click', function () {
             
-            const insertReplyHtml = `<p>${result.reply.body}</p><br>`;
+            const insertReplyHtml = `${result.reply.body}<br>`;
             const item = Office.context.mailbox.item;
   
             if (Office.context.mailbox.item.itemType === Office.MailboxEnums.ItemType.Message &&
