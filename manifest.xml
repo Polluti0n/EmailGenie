@@ -125,6 +125,7 @@
     </bt:Images>
     <bt:Urls>
       <bt:Url id="taskPaneUrl" DefaultValue="https://polluti0n.github.io/EmailGenie/index.html"/>
+      <bt:Url id="dialogUrl" DefaultValue="https://polluti0n.github.io/EmailGenie/dialog.html"/>
     </bt:Urls>
     <bt:ShortStrings>
       <bt:String id="groupLabel" DefaultValue="EmailGenie"/>
