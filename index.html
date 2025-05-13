@@ -13,7 +13,8 @@
 
 <body>
   <!-- BEGIN GLOBAL THEME SCRIPT -->
-  <script src="./js/emailgenie-theme.js"></script>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="./js/emailgenie-theme.js" defer></script>
   <!-- END GLOBAL THEME SCRIPT -->
 
   <div class="page">
@@ -157,7 +158,7 @@
                 Generate Reply
               </button>
             </form>
-          </div>
+                <option value="General Reply">General Reply</option>
         </div>
       </div>
       <div id="emailPreview" class="view"></div>
@@ -168,7 +169,7 @@
 
   <!-- BEGIN SETTINGS CONTAINER  -->
   <div id="settingsContainer" class="settings">
-    <form class="offcanvas offcanvas-start offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
+    <form class="offcanvas offcanvas-end offcanvas-narrow" tabindex="-1" id="offcanvasSettings">
       <div class="offcanvas-header">
         <h2 class="offcanvas-title">Settings</h2>
       </div>
@@ -434,7 +435,6 @@
 
 
   <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <!-- END GLOBAL MANDATORY SCRIPTS -->
@@ -442,54 +442,78 @@
   <!-- BEGIN MANDATORY PAGE THEME SCRIPT -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      var themeConfig = {
-        theme: "light",
-        "theme-base": "gray",
-        "theme-font": "sans-serif",
-        "theme-primary": "blue",
-        "theme-radius": "1",
-      };
-      var url = new URL(window.location);
-      var form = document.getElementById("offcanvasSettings");
-      var resetButton = document.getElementById("reset-changes");
-      var checkItems = function () {
-        for (var key in themeConfig) {
-          var value = window.localStorage["tabler-" + key] || themeConfig[key];
-          if (!!value) {
-            var radios = form.querySelectorAll(`[name="${key}"]`);
-            if (!!radios) {
-              radios.forEach((radio) => {
-                radio.checked = radio.value === value;
-              });
-            }
-          }
+  var themeConfig = {
+    theme: "light",
+    "theme-base": "gray",
+    "theme-font": "sans-serif",
+    "theme-primary": "blue",
+    "theme-radius": "1",
+  };
+
+  var url = new URL(window.location);
+  var form = document.getElementById("offcanvasSettings");
+  var resetButton = document.getElementById("reset-changes");
+
+  var applyThemeValue = function (key, value) {
+    document.documentElement.setAttribute("data-bs-" + key, value);
+    window.localStorage.setItem("tabler-" + key, value);
+    Office.context.roamingSettings.set("tabler-" + key, value);
+  };
+
+  var checkItems = function () {
+    for (var key in themeConfig) {
+      let stored =
+        Office.context.roamingSettings.get("tabler-" + key) ||
+        window.localStorage.getItem("tabler-" + key) ||
+        themeConfig[key];
+
+      if (stored) {
+        document.documentElement.setAttribute("data-bs-" + key, stored);
+
+        var radios = form.querySelectorAll(`[name="${key}"]`);
+        if (radios) {
+          radios.forEach((radio) => {
+            radio.checked = radio.value === stored;
+          });
         }
-      };
-      form.addEventListener("change", function (event) {
-        var target = event.target,
-          name = target.name,
-          value = target.value;
-        for (var key in themeConfig) {
-          if (name === key) {
-            document.documentElement.setAttribute("data-bs-" + key, value);
-            window.localStorage.setItem("tabler-" + key, value);
-            url.searchParams.set(key, value);
-          }
-        }
-        window.history.pushState({}, "", url);
-      });
-      resetButton.addEventListener("click", function () {
-        for (var key in themeConfig) {
-          var value = themeConfig[key];
-          document.documentElement.removeAttribute("data-bs-" + key);
-          window.localStorage.removeItem("tabler-" + key);
-          url.searchParams.delete(key);
-        }
-        checkItems();
-        window.history.pushState({}, "", url);
-      });
-      checkItems();
-    });
+      }
+    }
+  };
+
+  form.addEventListener("change", function (event) {
+    var target = event.target,
+      name = target.name,
+      value = target.value;
+
+    for (var key in themeConfig) {
+      if (name === key) {
+        applyThemeValue(key, value);
+        url.searchParams.set(key, value);
+      }
+    }
+
+    Office.context.roamingSettings.saveAsync(); // persist settings
+    window.history.pushState({}, "", url);
+  });
+
+  resetButton.addEventListener("click", function () {
+    for (var key in themeConfig) {
+      var defaultValue = themeConfig[key];
+      document.documentElement.removeAttribute("data-bs-" + key);
+      window.localStorage.removeItem("tabler-" + key);
+      Office.context.roamingSettings.remove("tabler-" + key);
+      url.searchParams.delete(key);
+    }
+
+    Office.context.roamingSettings.saveAsync(); // persist settings
+    checkItems();
+    window.history.pushState({}, "", url);
+  });
+
+  Office.onReady(function () {
+    checkItems();
+  });
+});
   </script>
   <!-- END MANDATORY PAGE THEME SCRIPT -->
 
