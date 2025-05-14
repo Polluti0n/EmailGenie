@@ -5,9 +5,10 @@ Office.onReady((info) => {
     initTheme();
     
     startLoading(() => {
-    // Simulate loading work
-    return new Promise((resolve) => setTimeout(resolve, 5000));
-  })
+      // Simulate loading work
+      return new Promise((resolve) => setTimeout(resolve, 5000));
+    });
+  }
 });
 const themeConfig = {
 	"theme": "light",
