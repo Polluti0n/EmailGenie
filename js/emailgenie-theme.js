@@ -73,7 +73,7 @@ function initTheme() {
 const rand = (min, max) => Math.floor(Math.random() * (max - min) + min);
 
 function startLoading(callback) {
-  const container = document.querySelector('.page');
+  const docBody = document.body
   const loader = document.createElement("div");
   loader.classList.add("loader", "loader-18");
 
@@ -83,7 +83,7 @@ function startLoading(callback) {
     loader.append(star);
   }
 
-  container.append(loader);
+  docBody.append(loader);
 
   // Execute the callback (can be async)
   Promise.resolve(callback()).finally(() => {
