@@ -83,7 +83,6 @@
                 </Icon>
                 <Action xsi:type="ShowTaskpane">
                   <SourceLocation resid="taskPaneUrl"/>
-                  <SupportsPinning>true</SupportsPinning>
                 </Action>
               </Control>
             </Group>
@@ -107,7 +106,6 @@
                 </Icon>
                 <Action xsi:type="ShowTaskpane">
                   <SourceLocation resid="taskPaneUrl"/>
-                  <SupportsPinning>true</SupportsPinning>
                 </Action>
               </Control>
             </Group>
