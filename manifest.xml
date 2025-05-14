@@ -55,7 +55,7 @@
 <VersionOverrides 
   xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
   xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-  xsi:type="VersionOverridesV1_0">
+  xsi:type="VersionOverridesV1_3">
 
   <Requirements>
     <bt:Sets DefaultMinVersion="1.8">
