@@ -66,7 +66,6 @@
   <Hosts>
     <Host xsi:type="MailHost">
       <DesktopFormFactor>
-        <SupportsPinning>true</SupportsPinning>
         <ExtensionPoint xsi:type="MessageComposeCommandSurface">
           <OfficeTab id="Message">
             <Group id="msgComposeGroup">
@@ -84,6 +83,7 @@
                 </Icon>
                 <Action xsi:type="ShowTaskpane">
                   <SourceLocation resid="taskPaneUrl"/>
+                  <SupportsPinning>true</SupportsPinning>
                 </Action>
               </Control>
             </Group>
@@ -107,6 +107,7 @@
                 </Icon>
                 <Action xsi:type="ShowTaskpane">
                   <SourceLocation resid="taskPaneUrl"/>
+                  <SupportsPinning>true</SupportsPinning>
                 </Action>
               </Control>
             </Group>
