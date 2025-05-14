@@ -55,7 +55,7 @@
 <VersionOverrides 
   xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
   xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
-  xsi:type="VersionOverridesV1_3">
+  xsi:type="VersionOverridesV1_0">
 
   <Requirements>
     <bt:Sets DefaultMinVersion="1.8">
@@ -137,16 +137,5 @@
   </Resources>
 
 </VersionOverrides>
-
-  <SupportsSharedFolders>true</SupportsSharedFolders>
-
-  <WebApplicationInfo>
-    <Id>00000003-0000-0000-c000-000000000000</Id>
-    <Resource>https://graph.microsoft.com</Resource>
-    <Scopes>
-      <Scope>Files.ReadWrite</Scope>
-      <Scope>User.Read</Scope>
-    </Scopes>
-  </WebApplicationInfo>
 
 </OfficeApp>
