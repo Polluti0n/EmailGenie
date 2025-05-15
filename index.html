@@ -406,7 +406,7 @@ function onEmailChanged(newBody) {
 
 
   
-async function getEmailAnalysis() {
+async function getEmailAnalysis(newBody) {
   const data = { "emailText": newBody};
         try {
           const response = await fetch(
