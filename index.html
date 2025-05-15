@@ -421,7 +421,7 @@ async function getEmailAnalysis() {
           const result = await response.json();
           console.log("Response:", result);
           if (result.success) {
-            return renderEmailAnalysis(result.data);
+            return renderEmailAnalysis(result.reply);
           } else {
             console.error("Error in response:", result.error);
           }
@@ -429,7 +429,7 @@ async function getEmailAnalysis() {
           console.error("Error fetching data:", error);
         }
 
-  renderEmailAnalysis(result);
+  renderEmailAnalysis(result.reply);
 
 }
 
