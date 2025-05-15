@@ -419,7 +419,7 @@ async function getEmailAnalysis() {
           );
 
           const result = await response.json();
-
+          console.log("Response:", result);
           if (result.success) {
             return renderEmailAnalysis(result.data);
           } else {
@@ -429,7 +429,7 @@ async function getEmailAnalysis() {
           console.error("Error fetching data:", error);
         }
 
-  renderEmailAnalysis(newBody);
+  renderEmailAnalysis(result);
 
 }
 

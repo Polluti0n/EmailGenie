@@ -117,7 +117,7 @@ function triggerPoof(loader) {
       const part = document.createElement("span");
       part.style = `
         --cloud: url(${shapes[rand(0, shapes.length)]});
-        background: linear-gradient(crimson, crimson) no-repeat center / contain, var(--cloud) no-repeat center / contain;
+        background: linear-gradient(var(--tblr-theme-primary), var(--tblr-theme-primary)) no-repeat center / contain, var(--cloud) no-repeat center / contain;
         mask: var(--cloud) no-repeat center / contain;
         rotate: ${rand(0, 360)}deg;
       `;
