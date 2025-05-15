@@ -69,7 +69,65 @@
     <!-- END NAVBAR  -->
 
     <div class="page-wrapper p-2">
-      <div id="formContainer" class="view active">
+              <div class="row row-deck row-cards" id="card-deck">
+          <div class="card card-sm">
+            <div class="d-flex">
+              <div class="card-body">
+                <div class="col">
+                  <div class="mb-1 col">Summary</div>
+                  <div class="text-secondary w-100">
+                    Some summary text goes here.
+                  </div>
+                </div>
+              </div>
+              <div>
+                <a href="#" class="link-secondary"
+                  ><!-- Download SVG icon from http://tabler.io/icons/icon/share -->
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M9 6l6 6l-6 6"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="card card-sm">
+            <div class="card-body">
+              <div class="mb-1 col">Quick Reply</div>
+              <div class="list-group list-group-flush">
+                <span
+                  class="list-group-item text-secondary rounded p-2"
+                  aria-current="true"
+                >
+                  The current link item
+                </span>
+                <span class="list-group-item text-secondary rounded p-2"
+                  >A second link item</span
+                >
+                <span class="list-group-item text-secondary rounded p-2"
+                  >A third link item</span
+                >
+                <span class="list-group-item text-secondary rounded p-2"
+                  >A fourth link item</span
+                >
+              </div>
+            </div>
+            <div class="d-flex"></div>
+          </div>
+        </div>
+        
+      <!-- <div id="formContainer" class="view active">
         <div class="card-body">
           <div class="mb-4 d-flex justify-content-between">
             <h2 class="col">Reply Detail</h2>
@@ -159,7 +217,7 @@
       </div>
       <div id="emailPreview" class="view"></div>
 
-    </div>
+    </div> -->
 
   </div>
 
@@ -521,23 +579,168 @@
   <!-- BEGIN PAGE SCRIPT -->
   <script>
     //   let templateContent = null;
-    let originalEmailBody = "";
-    Office.onReady((info) => {
-      if (info.host === Office.HostType.Outlook) {
-        Office.context.mailbox.item.body.getAsync(
-          Office.CoercionType.Text,
-          (result) => {
-            if (result.status === Office.AsyncResultStatus.Succeeded) {
-              originalEmailBody = result.value;
-            } else {
-              console.error(
-                "Failed to get email body:",
-                result.error.message
-              );
-            }
-          }
-        );
+let originalEmailBody = "";
+let pollingInterval = null;
+
+Office.onReady((info) => {
+  if (info.host === Office.HostType.Outlook) {
+    // Start polling only on the index page
+    if (window.location.pathname.endsWith("/index.html")) {
+      startEmailPolling();
+    }
+
+    // Optional: Monitor URL changes (for SPA-style apps)
+    const observer = new MutationObserver(() => {
+      if (window.location.pathname.endsWith("/index.html")) {
+        if (!pollingInterval) startEmailPolling();
+      } else {
+        stopEmailPolling();
       }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+});
+
+function startEmailPolling() {
+  pollingInterval = setInterval(() => {
+    try {
+      Office.context.mailbox.item.body.getAsync(
+        Office.CoercionType.Text,
+        (result) => {
+          if (result.status === Office.AsyncResultStatus.Succeeded) {
+            const currentBody = result.value;
+            if (currentBody !== originalEmailBody) {
+              originalEmailBody = currentBody;
+       
+              onEmailChanged(currentBody);
+            }
+          } else {
+            console.warn("Polling: Failed to get email body:", result.error.message);
+          }
+        }
+      );
+    } catch (err) {
+      console.error("Polling error:", err);
+    }
+  }, 2000); // Poll every 2 seconds
+}
+
+function stopEmailPolling() {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+}
+
+function onEmailChanged(newBody) {
+  startLoading(() => { 
+    getEmailAnalysis(newBody);
+  });
+}
+
+
+  
+function getEmailAnalysis() {
+  const data = { "emailText": newBody};
+        try {
+          const response = await fetch(
+            "https://prod-145.westus.logic.azure.com:443/workflows/c65d371e274a4a29a0daa3ee25ce63bd/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-skVHfpWefHb6DNSYMWTmkI3mEUObkxnK2wAvBwU-wg",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            }
+          );
+
+          const result = await response.json();
+
+          if (result.success) {
+            return renderEmailAnalysis(result.data);
+          } else {
+            console.error("Error in response:", result.error);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+
+  renderEmailAnalysis(newBody);
+
+}
+
+
+ function renderEmailAnalysis(data) {
+    const container = document.getElementById("card-deck");
+    container.innerHTML = ""; // Clear existing content
+    
+    // === Sentiment Card ===
+    const sentimentColors = {
+      Positive: "bg-green",
+      Negative: "bg-red",
+      Neutral: "bg-yellow"
+    };
+    
+    const sentimentIcon = {
+      
+      Positive: `<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-mood-smile"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0" /></svg>`,
+      Negative: `<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-mood-sad"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9.5 15.25a3.5 3.5 0 0 1 5 0" /></svg>`,
+      Neutral: `<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-mood-empty"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M9 10l.01 0" /><path d="M15 10l.01 0" /><path d="M9 15l6 0" /></svg>`
+    }
+    
+    const sentimentCard = document.createElement("div");
+    sentimentCard.className = "card";
+    sentimentCard.innerHTML = `
+    <div class="card-body">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <span class="${sentimentColors[data.sentiment] || "bg-gray"} text-white avatar">
+            ${sentimentIcon}
+            </span>
+            </div>
+            <div class="col">
+              <div class="font-weight-medium">${data.sentiment}</div>
+              <div class="text-secondary">Email Sentiment</div>
+              </div>
+              </div>
+              </div>
+              `;
+              container.appendChild(sentimentCard);
+              
+                  // === Summary Card ===
+                  const summaryCard = document.createElement("div");
+                  summaryCard.className = "card";
+                  summaryCard.innerHTML = `
+                    <div class="card-body">
+                      <div class="col">
+                        <div class="mb-1 col">Summary</div>
+                        <div class="text-secondary w-100">${data.summary}</div>
+                      </div>
+                    </div>
+                  `;
+                  container.appendChild(summaryCard);
+              
+    // === Quick Reply Card ===
+    const quickReplyCard = document.createElement("div");
+    quickReplyCard.className = "card";
+
+    const replies = data.responses.map(
+      r => `<span class="list-group-item text-secondary rounded p-2" aria-current="true">${r.item}</span>`
+    ).join("");
+
+    quickReplyCard.innerHTML = `
+      <div class="card-body">
+        <div class="mb-1 col">Quick Reply</div>
+        <div class="list-group list-group-flush">
+          ${replies}
+        </div>
+      </div>
+      <div class="d-flex"></div>
+    `;
+    container.appendChild(quickReplyCard);
+  }
+
+
+
       const settingsBtn = document.getElementById("settingsBtn");
       if (settingsBtn) {
         settingsBtn.onclick = showSettings;
@@ -585,57 +788,6 @@
       templateContent = event.clipboardData.getData("text/plain");
       templateDiv.innerHTML = event.clipboardData.getData("text/html");
     });
-
-    // document
-    //   .getElementById("templateContent")
-    //   .addEventListener("change", function (e) {
-    //     const file = e.target.files[0];
-    //     const fileCardContainer =
-    //       document.getElementById("fileCardContainer");
-
-    //     if (file) {
-    //       const maxSize = 5 * 1024 * 1024;
-    //       if (file.size > maxSize) {
-    //         console.log("File too large. Max 5MB.");
-    //         e.target.value = "";
-    //         templateContent = null;
-    //         fileCardContainer.innerHTML = "";
-    //         return;
-    //       }
-
-    //       const reader = new FileReader();
-    //       reader.onload = function (event) {
-    //         templateContent = {
-    //           fileName: file.name,
-    //           fileType: file.type,
-    //           fileSize: file.size,
-    //           base64Content: event.target.result.split(",")[1],
-    //         };
-
-    //         const fileSizeKB = (file.size / 1024).toFixed(1);
-    //         fileCardContainer.innerHTML = `
-    //       <div class="card shadow-sm fade-in">
-    //         <div class="card-body">
-    //           <h5 class="card-title">${file.name}</h5>
-    //           <p><strong>Size:</strong> ${fileSizeKB} KB</p>
-    //           <p><strong>Type:</strong> ${file.type || "Unknown"}</p>
-    //           <button type="button" class="btn btn-sm btn-outline-danger" id="removeFileButton">Remove</button>
-    //         </div>
-    //       </div>
-    //     `;
-
-    //         document
-    //           .getElementById("removeFileButton")
-    //           .addEventListener("click", function () {
-    //             document.getElementById("templateContent").value = "";
-    //             templateContent = null;
-    //             fileCardContainer.innerHTML = "";
-    //           });
-    //       };
-
-    //       reader.readAsDataURL(file);
-    //     }
-    //   });
 
     document
       .getElementById("replyForm")
