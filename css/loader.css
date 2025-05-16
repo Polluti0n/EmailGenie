@@ -7,20 +7,26 @@
   padding: 0;
 }
 
-.container {
+.loader-overlay {
+  position: relative;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  translate: -50% -50%;
+.star-loader {
+  position: relative;
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  display: block;
-  translate: -50% -50%;
+  vertical-align: middle;
+  filter: brightness(1.5) contrast(1.5);
 }
 
 .css-star {
@@ -71,9 +77,9 @@
   content: "";
 }
 
-/*LOADER-18*/
+/*star-loader*/
 
-.loader-18 .css-star {
+.star-loader .css-star {
   position: absolute;
   -webkit-transform: rotate(180deg) scale(0.5);
   -ms-transform: rotate(180deg) scale(0.5);
@@ -81,62 +87,62 @@
   opacity: 0.4;
 }
 
-.loader-18 .css-star,
-.loader-18 .css-star:before,
-.loader-18 .css-star:after {
-  border-bottom-color: var(--tblr-theme-primary);
+.star-loader .css-star,
+.star-loader .css-star:before,
+.star-loader .css-star:after {
+  border-bottom-color: var(--tblr-primary-color);
 }
 
-.loader-18 .star1 {
+.star-loader .star1 {
   top: -20px;
   left: 5px;
   -webkit-animation: star-crazyness 1s 0.125s ease infinite;
   animation: star-crazyness 1s 0.125s ease infinite;
 }
 
-.loader-18 .star2 {
+.star-loader .star2 {
   left: 25px;
   top: -10px;
   -webkit-animation: star-crazyness 1s 0.3s ease infinite;
   animation: star-crazyness 1s 0.3s ease infinite;
 }
 
-.loader-18 .star3 {
+.star-loader .star3 {
   left: 35px;
   top: 10px;
   -webkit-animation: star-crazyness 1s 0.425s ease infinite;
   animation: star-crazyness 1s 0.425s ease infinite;
 }
 
-.loader-18 .star4 {
+.star-loader .star4 {
   top: 30px;
   left: 27px;
   -webkit-animation: star-crazyness 1s 0.54s ease infinite;
   animation: star-crazyness 1s 0.54s ease infinite;
 }
 
-.loader-18 .star5 {
+.star-loader .star5 {
   top: 40px;
   left: 5px;
   -webkit-animation: star-crazyness 1s 0.665s ease infinite;
   animation: star-crazyness 1s 0.665s ease infinite;
 }
 
-.loader-18 .star6 {
+.star-loader .star6 {
   top: 30px;
   left: -15px;
   -webkit-animation: star-crazyness 1s 0.79s ease infinite;
   animation: star-crazyness 1s 0.79s ease infinite;
 }
 
-.loader-18 .star7 {
+.star-loader .star7 {
   top: 10px;
   left: -25px;
   -webkit-animation: star-crazyness 1s 0.9s ease infinite;
   animation: star-crazyness 1s 0.9s ease infinite;
 }
 
-.loader-18 .star8 {
+.star-loader .star8 {
   top: -10px;
   left: -15px;
   -webkit-animation: star-crazyness 1s 1s ease infinite;
@@ -215,8 +221,16 @@
   position: absolute;
   width: 100px;
   height: 100px;
+  background: linear-gradient(
+        var(--tblr-primary-color),
+        var(--tblr-primary-color)
+      )
+      no-repeat center / contain,
+    var(--poof-shape) no-repeat center / contain;
   background-blend-mode: multiply;
   top: 50%;
   left: 50%;
   translate: -50% -50%;
+  mask: var(--poof-shape) no-repeat center / contain;
+  rotate: var(--poof-rotate);
 }
