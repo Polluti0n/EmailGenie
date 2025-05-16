@@ -1,4 +1,4 @@
-import createLoader from '.js//loader.js';
+import createLoader from './loader.js';
 
 let originalEmailBody = "";
 let pollingInterval = null;
