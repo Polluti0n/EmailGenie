@@ -8,7 +8,9 @@
 }
 
 .loader-overlay {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -90,7 +92,7 @@
 .star-loader .css-star,
 .star-loader .css-star:before,
 .star-loader .css-star:after {
-  border-bottom-color: var(--tblr-primary-color);
+  border-bottom-color: var(--tblr-primary);
 }
 
 .star-loader .star1 {
@@ -222,8 +224,8 @@
   width: 100px;
   height: 100px;
   background: linear-gradient(
-        var(--tblr-primary-color),
-        var(--tblr-primary-color)
+        var(--tblr-primary),
+        var(--tblr-primary)
       )
       no-repeat center / contain,
     var(--poof-shape) no-repeat center / contain;
